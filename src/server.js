@@ -1,5 +1,5 @@
 import http from "http";
-import WebSocket from "ws";
+import { WebSocketServer } from "ws";
 import express from "express";
 
 const app = express();
@@ -17,6 +17,8 @@ const hadleListen = () =>
   console.log(`✅ Listening on http://localhost:4500 🔥`);
 
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocketServer({ server });
+// Create WebSocket server on http sever.
 
 server.listen(4500, hadleListen);
+// only http => app.listen(4500, handleListen);
