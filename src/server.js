@@ -1,3 +1,5 @@
+import http from "http";
+import WebSocket from "ws";
 import express from "express";
 
 const app = express();
@@ -13,4 +15,8 @@ app.get("/*", (req, res) => res.redirect("/"));
 
 const hadleListen = () =>
   console.log(`✅ Listening on http://localhost:4500 🔥`);
-app.listen(4500, hadleListen);
+
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
+
+server.listen(4500, hadleListen);
