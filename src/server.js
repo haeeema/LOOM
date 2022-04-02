@@ -20,13 +20,15 @@ const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
 // Create WebSocket server on http sever.
 
+const sockets = [];
+
 wss.on("connection", (socket) => {
+  sockets.push(socket);
   console.log("✅ Connected to Browser");
   socket.on("close", () => console.log("⛔️ Disconnected from Browser"));
-  socket.on("message", (mesaage) => {
-    console.log(mesaage);
+  socket.on("message", (message) => {
+    sockets.forEach((aSocket) => aSocket.send(message.toString()));
   });
-  socket.send("hello!");
   // Method of socket, not method of ws.
 });
 // On method is going to give us some information about the person that just connectied to our backend.
