@@ -1,5 +1,5 @@
 import http from "http";
-import { WebSocketServer } from "ws";
+import SocketIO from "socket.io";
 import express from "express";
 
 const app = express();
@@ -13,10 +13,18 @@ app.get("/", (req, res) => res.render("home"));
 app.get("/*", (req, res) => res.redirect("/"));
 // NEW!! Catchall URL
 
-const hadleListen = () =>
-  console.log(`✅ Listening on http://localhost:4500 🍋`);
+const httpServer = http.createServer(app);
+const wsServer = SocketIO(httpServer);
+// We have to install socket io in the backend and in the frontend.
 
-const server = http.createServer(app);
+wsServer.on("connection", (socket) => {
+  socket.on("enter_room", (roomName, done) => {
+    socket.join(roomName);
+    done();
+  });
+});
+
+/* 
 const wss = new WebSocketServer({ server });
 // Create WebSocket server on http sever.
 
@@ -44,7 +52,10 @@ wss.on("connection", (socket) => {
   // Method of socket, not method of ws.
 });
 // On method is going to give us some information about the person that just connectied to our backend.
-// On server.js, <socket> represents the browser that just connected.
+// On server.js, <socket> represents the browser that just connected. */
 
-server.listen(4500, hadleListen);
+const hadleListen = () =>
+  console.log(`✅ Listening on http://localhost:4500 🍋`);
+
+httpServer.listen(4500, hadleListen);
 // only http => app.listen(4500, handleListen);

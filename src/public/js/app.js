@@ -1,44 +1,28 @@
-const messageList = document.querySelector("ul");
-const nicknameForm = document.querySelector("#nicknameForm");
-const inputForm = document.querySelector("#inputForm");
-const socket = new WebSocket(`ws://${window.location.host}`);
-// On app.js, <socket> represents a connection to the server.
+const socket = io();
 
-function makeMessage(type, payload) {
-  const stringifiedMessage = { type, payload };
-  // Make object
-  return JSON.stringify(stringifiedMessage);
-  // and then turn into String
-  // ❗️The problem is that our backend doesn't understand javascript objects.
+const welcome = document.getElementById("welcome");
+const form = welcome.querySelector("form");
+const room = document.getElementById("room");
+
+room.hidden = true;
+let roomName;
+
+function showRoom() {
+  welcome.hidden = true;
+  room.hidden = false;
+  const h3 = room.querySelector("h3");
+  h3.innerText = `Room ${roomName}`;
 }
 
-socket.addEventListener("open", () => {
-  console.log("✅ Connected to server of LOOM 🍋");
-});
-
-socket.addEventListener("message", (message) => {
-  const li = document.createElement("li");
-  li.innerText = message.data;
-  messageList.append(li);
-});
-
-socket.addEventListener("close", () => {
-  console.log("⛔️ Disonnected from Server of LOOM 🍋");
-});
-
-function handleMessageSubmit(event) {
+function handleRoomSubmit(event) {
   event.preventDefault();
-  const input = inputForm.querySelector("input");
-  socket.send(makeMessage("new_message", input.value));
+  const input = form.querySelector("input");
+  socket.emit("enter_room", input.value, showRoom);
+  // 1. We can <emit> a specific event whatever name that we want.
+  // 2. We can send objects we do not have to send only strings.
+  // 3. We can call a function from our server.
+  roomName = input.value;
   input.value = "";
 }
 
-function handleNicknameSubmit(event) {
-  event.preventDefault();
-  const input = nicknameForm.querySelector("input");
-  socket.send(makeMessage("nickname", input.value));
-  input.value = "";
-}
-
-inputForm.addEventListener("submit", handleMessageSubmit);
-nicknameForm.addEventListener("submit", handleNicknameSubmit);
+form.addEventListener("submit", handleRoomSubmit);

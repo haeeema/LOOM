@@ -8,17 +8,17 @@ html(lang="en")
         link(rel="stylesheet" href="https://unpkg.com/mvp.css")
     body 
         header
-            h1 🍋 LOOM
+            h1 LOOM 🍋
         main
-            form
+            div#welcome 
+                form
+                    input(type="text", placeholder="room name", required)
+                    button Enter Room 
+            div#room
+                h3
                 ul
-            br
-            form#nicknameForm
-                span
-                input(type="text", placeholder="choice a nickname", required)
-                button SAVE
-            form#inputForm
-                span
-                input(type="text", placeholder="Write a message", required)
-                button SEND
+                form 
+                    input(type="text", placeholder="message", required)
+                    button Send
+        script(src="/socket.io/socket.io.js")    
         script(src="/public/js/app.js")
